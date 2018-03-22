@@ -476,7 +476,12 @@ class CppClass(dict):
             while len(nameStack):
                 tmpStack = []
                 tmpInheritClass = {"access":"private", "virtual": False}
-                if "," in nameStack:
+                # handle multiple template arguments in class inheritance
+                get_nameStack_index = lambda s: max(n if s in name else -1 for n, name in enumerate(nameStack))
+                comma_index = get_nameStack_index(",")
+                open_bracket_index = get_nameStack_index("<")
+                close_bracket_index = get_nameStack_index(">")
+                if "," in nameStack and not open_bracket_index < comma_index < close_bracket_index:
                     tmpStack = nameStack[:nameStack.index(",")]
                     nameStack = nameStack[nameStack.index(",") + 1:]
                 else:
