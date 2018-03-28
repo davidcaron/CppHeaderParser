@@ -898,6 +898,8 @@ class CppMethod( _CppMethod ):
 class _CppVariable(dict):
     def _name_stack_helper( self, stack ):
         stack = list(stack)
+        if all(s.isdigit() for s in stack):
+            return stack
         if '=' not in stack:        # TODO refactor me
             # check for array[n] and deal with funny array syntax: "int myvar:99"
             array = []
