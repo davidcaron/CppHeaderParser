@@ -399,6 +399,19 @@ class CppClass(dict):
             if meth['pure_virtual']: r[ meth['name'] ] = meth
         return r
 
+    def find_commas_outside_parentheses(self, stack, parens="<>"):
+        indices = []
+        count = 0
+        op, cp = parens
+        for n, name in enumerate(stack):
+            if op in name:
+                count += 1
+            elif cp in name:
+                count -= 1
+            if count == 0 and name == ",":
+                indices.append(n)
+        return indices
+
     def __init__(self, nameStack, curTemplate):
         self['nested_classes'] = []
         self['parent'] = None
@@ -477,13 +490,10 @@ class CppClass(dict):
                 tmpStack = []
                 tmpInheritClass = {"access":"private", "virtual": False}
                 # handle multiple template arguments in class inheritance
-                get_nameStack_index = lambda s: max(n if s in name else -1 for n, name in enumerate(nameStack))
-                comma_index = get_nameStack_index(",")
-                open_bracket_index = get_nameStack_index("<")
-                close_bracket_index = get_nameStack_index(">")
-                if "," in nameStack and not open_bracket_index < comma_index < close_bracket_index:
-                    tmpStack = nameStack[:nameStack.index(",")]
-                    nameStack = nameStack[nameStack.index(",") + 1:]
+                commasIndices = self.find_commas_outside_parentheses(nameStack)
+                if commasIndices:
+                    tmpStack = nameStack[:commasIndices[0]]
+                    nameStack = nameStack[commasIndices[0] + 1:]
                 else:
                     tmpStack = nameStack
                     nameStack = []
