@@ -30,7 +30,7 @@ CLASSIFIERS = [
 
 setup(
     name = 'CppHeaderParser',
-    version = '2.7.3',
+    version = '2.7.3.1',
     author = 'Jashua Cloutier',
     author_email = 'jashuac@bellsouth.net',
     url = 'http://senexcanis.com/open-source/cppheaderparser/',
